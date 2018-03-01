@@ -39,7 +39,7 @@ local descriptor = require "descriptor"
 local FieldDescriptor = descriptor.FieldDescriptor
 local text_format = require "text_format"
 
-module("protobuf")
+local protobuf = {}
 
 local function make_descriptor(name, descriptor, usable_key)
     local meta = {
@@ -56,7 +56,7 @@ local function make_descriptor(name, descriptor, usable_key)
         return setmetatable({}, meta)
     end
 
-    _M[name] = setmetatable(descriptor, meta);
+    protobuf[name] = setmetatable(descriptor, meta);
 end
 
 
@@ -298,7 +298,6 @@ end
 local function _AttachFieldHelpers(message_meta, field_descriptor)
     local is_repeated = (field_descriptor.label == FieldDescriptor.LABEL_REPEATED)
     local is_packed = (field_descriptor.has_options and field_descriptor.GetOptions().packed)
-
     rawset(field_descriptor, "_encoder", TYPE_TO_ENCODER[field_descriptor.type](field_descriptor.number, is_repeated, is_packed))
     rawset(field_descriptor, "_sizer", TYPE_TO_SIZER[field_descriptor.type](field_descriptor.number, is_repeated, is_packed))
     rawset(field_descriptor, "_default_constructor", _DefaultValueConstructorForField(field_descriptor))
@@ -901,6 +900,11 @@ local function Message(descriptor)
     if rawget(descriptor, "_concrete_class") == nil then
         rawset(descriptor, "_concrete_class", ns)
         for k, field in ipairs(descriptor.fields) do  
+            print("-----------------------")
+            for key, value in pairs(field) do
+                print(key, value)
+            end
+            print("-----------------------")
             _AttachFieldHelpers(message_meta, field)
         end
     end
@@ -918,5 +922,6 @@ local function Message(descriptor)
     return ns 
 end
 
-_M.Message = Message
+protobuf.Message = Message
 
+return protobuf

@@ -24,9 +24,9 @@ local tostring = tostring
 
 local descriptor = require "descriptor"
 
-module "text_format"
+local text_format = {}
 
-function format(buffer)
+function text_format.format(buffer)
     local len = string.len( buffer )	
     for i = 1, len, 16 do		
         local text = ""	
@@ -68,7 +68,7 @@ msg_format_indent = function(write, msg, indent)
     end
 end
 
-function msg_format(msg)
+function text_format.msg_format(msg)
     local out = {}
     local write = function(value)
         out[#out + 1] = value
@@ -77,3 +77,4 @@ function msg_format(msg)
     return table.concat(out)
 end
 
+return text_format

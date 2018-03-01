@@ -29,7 +29,7 @@
 #ifdef _ALLBSD_SOURCE
 #include <machine/endian.h>
 #else
-#include <endian.h>
+#include <machine/endian.h>
 #endif
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
@@ -42,6 +42,11 @@
     (IOString*) luaL_checkudata(L, 1, IOSTRING_META)
 
 #define IOSTRING_BUF_LEN 65535
+
+#define luaL_reg      luaL_Reg
+#undef luaL_register
+#define luaL_register(L,n,f) \
+    { if ((n) == NULL) luaL_setfuncs(L,f,0); else luaL_newlib(L,f); }
 
 typedef struct{
     size_t size;
